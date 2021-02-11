@@ -1,0 +1,59 @@
+<div class="text-center"><h1><%= @topic.title %></h1></div>
+<hr class="style-one">
+<%= form_for([@topic, @post]) do |f| %>
+  <% if @post.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@post.errors.count, "error") %> prohibited this post from being saved:</h2>
+
+      <ul>
+      <% @post.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+  
+  <div class="field">
+    <%= f.label :name, 'お名前' %><br>
+    <%= f.text_field :name %>
+  </div>
+
+  <div class="field">
+    <%= f.label :content, 'つぶやいてくれや'%><br>
+    <%= f.text_area :content%>
+    <% if user_signed_in? %>
+    <%= f.hidden_field :user_id, value: current_user.id %>
+    <% end %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit '投稿', :class => 'btn btn-default' %>
+  </div>
+  
+<% end %>
+<hr>
+<div id="post-list">
+<% @posts.each do |post| %>
+  <div class="post">
+    <div class="post-header">
+      <%= post.post_number %>. Name: <%= post.name %> &nbsp; Date: <%= post.created_at.strftime("%F %T") %>
+    </div>
+    <br>
+    <div class="post-body">
+      <%= simple_format(post.content) %>
+    </div>
+    <br>
+    <div class="post-footer"> 
+      <div class="pull-right">
+        <%= link_to 'Edit', edit_topic_post_path(@topic, post.id), :class => 'btn btn-default btn-xs' %>
+        <%= link_to 'Delete', [@topic, post], method: :delete, data: { confirm: '本当によろしいですか？' }, :class => 'btn btn-default btn-xs' %>
+      </div>
+    </div>
+  </div>
+  <br>
+  <hr>
+<% end %>
+</div>
+<div class="text-right">
+<%= link_to 'トピック一覧に戻る', topics_path, :class => 'btn btn-default' %>
+</div>
